@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNotes } from "../../context/NotesContext";
 import CreateNoteModal from "./CreateNoteModal";
 import { Plus, Search } from "lucide-react";
-import NoteCard from "./Notecard";
+import NoteCard from "./NoteCard";
 
 const Dashboard = ({ selectedCategory }) => {
   const { notes, searchNotes, fetchNotes, filterByCategory } = useNotes();
