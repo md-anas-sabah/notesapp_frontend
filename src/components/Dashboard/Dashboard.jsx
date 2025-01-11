@@ -1,25 +1,41 @@
-import { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useState, useEffect } from "react";
 import { useNotes } from "../../context/NotesContext";
 import CreateNoteModal from "./CreateNoteModal";
 import { Plus, Search } from "lucide-react";
 import NoteCard from "./Notecard";
 
-const Dashboard = () => {
-  const { notes, searchNotes } = useNotes();
+const Dashboard = ({ selectedCategory }) => {
+  const { notes, searchNotes, fetchNotes, filterByCategory } = useNotes();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Reset search and fetch all notes when selectedCategory changes
+  useEffect(() => {
+    if (!selectedCategory && !searchTerm) {
+      fetchNotes();
+    }
+  }, [selectedCategory, searchTerm, fetchNotes]);
 
   const handleSearch = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
-    searchNotes(term);
+    if (term.trim() === "") {
+      if (selectedCategory) {
+        filterByCategory(selectedCategory);
+      } else {
+        fetchNotes();
+      }
+    } else {
+      searchNotes(term);
+    }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          My Notes
+          {selectedCategory ? `My Notes - ${selectedCategory}` : "My Notes"}
         </h2>
 
         <div className="mt-4 md:mt-0 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
@@ -44,11 +60,17 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {notes.map((note) => (
-          <NoteCard key={note.id} note={note} />
-        ))}
-      </div>
+      {notes.length === 0 ? (
+        <div className="text-center text-gray-500 dark:text-gray-400 mt-8">
+          No notes found
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {notes.map((note) => (
+            <NoteCard key={note._id} note={note} />
+          ))}
+        </div>
+      )}
 
       <CreateNoteModal
         isOpen={isModalOpen}

@@ -1,9 +1,19 @@
 import { NavLink } from "react-router-dom";
-// eslint-disable-next-line no-unused-vars
 import { Home, User, Archive, Tag } from "lucide-react";
+import { useNotes } from "../../context/NotesContext";
 
-const Sidebar = () => {
+const Sidebar = ({ onCategorySelect }) => {
   const categories = ["Personal", "Work", "Study", "Important"];
+  const { filterByCategory } = useNotes();
+
+  const handleCategoryClick = (category) => {
+    filterByCategory(category);
+    onCategorySelect(category);
+  };
+
+  const handleDashboardClick = () => {
+    onCategorySelect(null);
+  };
 
   return (
     <aside className="hidden md:flex md:flex-shrink-0">
@@ -12,6 +22,7 @@ const Sidebar = () => {
           <nav className="mt-5 flex-1 px-2 space-y-1">
             <NavLink
               to="/"
+              onClick={handleDashboardClick}
               className={({ isActive }) =>
                 `flex items-center px-4 py-2 text-sm font-medium rounded-lg ${
                   isActive
@@ -46,6 +57,7 @@ const Sidebar = () => {
                 {categories.map((category) => (
                   <button
                     key={category}
+                    onClick={() => handleCategoryClick(category)}
                     className="w-full flex items-center px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
                   >
                     <Tag className="mr-3 h-4 w-4" />

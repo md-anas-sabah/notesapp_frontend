@@ -70,6 +70,9 @@ const NoteCard = ({ note }) => {
     }
   };
 
+  const isEdited =
+    new Date(note.updatedAt).getTime() > new Date(note.createdAt).getTime();
+
   return (
     <>
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
@@ -90,7 +93,11 @@ const NoteCard = ({ note }) => {
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1" />
-              <span>{new Date(note.updatedAt).toLocaleDateString()}</span>
+              <span>
+                {isEdited
+                  ? `Edited at ${new Date(note.updatedAt).toLocaleDateString()}`
+                  : new Date(note.createdAt).toLocaleDateString()}
+              </span>
             </div>
 
             <div className="flex space-x-2">

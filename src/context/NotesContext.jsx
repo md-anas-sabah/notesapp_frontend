@@ -74,21 +74,27 @@ export const NotesProvider = ({ children }) => {
 
   const filterByCategory = async (category) => {
     try {
-      const response = await notesAPI.getNotesByCategory(category);
-      setNotes(response.data);
+      if (category) {
+        const response = await notesAPI.getNotesByCategory(category);
+        setNotes(response.data);
+      } else {
+        // If no category is provided, fetch all notes
+        await fetchNotes();
+      }
     } catch (error) {
       console.error("Error filtering notes:", error);
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <NotesContext.Provider
       value={{
         notes,
+        fetchNotes,
         createNote,
         updateNote,
         deleteNote,
