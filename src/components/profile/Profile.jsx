@@ -1,6 +1,7 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { User, Mail, Lock } from "lucide-react";
+import { userAPI } from "../../services/api";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -14,32 +15,85 @@ const Profile = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setError("");
+  //   setSuccess("");
+
+  //   if (
+  //     formData.newPassword &&
+  //     formData.newPassword !== formData.confirmNewPassword
+  //   ) {
+  //     setError("New passwords do not match");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch("/api/users/profile", {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
+  //     const data = await response.json();
+  //     if (!response.ok) throw new Error(data.message);
+
+  //     setSuccess("Profile updated successfully");
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       currentPassword: "",
+  //       newPassword: "",
+  //       confirmNewPassword: "",
+  //     }));
+  //   } catch (err) {
+  //     setError(err.message);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (
-      formData.newPassword &&
-      formData.newPassword !== formData.confirmNewPassword
-    ) {
-      setError("New passwords do not match");
-      return;
-    }
-
     try {
-      const response = await fetch("/api/users/profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
+      const updatedData = {};
+      if (formData.name && formData.name !== user?.name) {
+        updatedData.name = formData.name;
+      }
+
+      if (formData.email && formData.email !== user?.email) {
+        updatedData.email = formData.email;
+      }
+
+      if (formData.currentPassword) {
+        if (formData.newPassword !== formData.confirmNewPassword) {
+          setError("New passwords do not match");
+          return;
+        }
+
+        if (!formData.newPassword) {
+          setError("Please enter a new password");
+          return;
+        }
+
+        updatedData.currentPassword = formData.currentPassword;
+        updatedData.newPassword = formData.newPassword;
+      } else if (formData.newPassword || formData.confirmNewPassword) {
+        setError("Please enter your current password to change password");
+        return;
+      }
+
+      if (Object.keys(updatedData).length === 0) {
+        setError("No changes to update");
+        return;
+      }
+
+      const response = await userAPI.updateProfile(updatedData);
 
       setSuccess("Profile updated successfully");
+
       // Reset password fields
       setFormData((prev) => ({
         ...prev,
@@ -48,7 +102,8 @@ const Profile = () => {
         confirmNewPassword: "",
       }));
     } catch (err) {
-      setError(err.message);
+      console.error("Update error:", err);
+      setError(err.response?.data?.message || "Failed to update profile");
     }
   };
 

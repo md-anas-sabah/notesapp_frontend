@@ -17,6 +17,11 @@ const CreateNoteModal = ({ isOpen, onClose, note = null }) => {
       updateNote(note.id, formData);
     } else {
       createNote(formData);
+      setFormData({
+        title: "",
+        content: "",
+        category: "Personal",
+      });
     }
     onClose();
   };

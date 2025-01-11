@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import { NavLink } from "react-router-dom";
-import { Home, User, Archive, Tag } from "lucide-react";
+import { Home, User, Tag } from "lucide-react";
 import { useNotes } from "../../context/NotesContext";
 
 const Sidebar = ({ onCategorySelect }) => {

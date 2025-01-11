@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
@@ -12,14 +13,14 @@ const EditNoteModal = ({ note, isOpen, onClose }) => {
   });
 
   useEffect(() => {
-    if (note) {
+    if (note && isOpen) {
       setFormData({
-        title: note.title,
-        content: note.content,
+        title: note.title || "",
+        content: note.content || "",
         category: note.category || "Personal",
       });
     }
-  }, [note]);
+  }, [note?._id, isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,7 +64,7 @@ const EditNoteModal = ({ note, isOpen, onClose }) => {
                 type="text"
                 value={formData.title}
                 onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
+                  setFormData((prev) => ({ ...prev, title: e.target.value }))
                 }
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 required
@@ -77,7 +78,7 @@ const EditNoteModal = ({ note, isOpen, onClose }) => {
               <select
                 value={formData.category}
                 onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
+                  setFormData((prev) => ({ ...prev, category: e.target.value }))
                 }
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               >
@@ -95,7 +96,7 @@ const EditNoteModal = ({ note, isOpen, onClose }) => {
               <textarea
                 value={formData.content}
                 onChange={(e) =>
-                  setFormData({ ...formData, content: e.target.value })
+                  setFormData((prev) => ({ ...prev, content: e.target.value }))
                 }
                 rows="4"
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
